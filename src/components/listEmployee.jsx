@@ -81,9 +81,10 @@ const ListEmployee = () => {
       <table className="table table-bordered table-striped">
         <thead className="table-light">
           <tr>
-            <th>Employee Id</th>
-            <th>Employee First Name</th>
-            <th>Employee Last Name</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Id</th>
+            <th>Email</th>
             <th>Update / Delete</th>
           </tr>
         </thead>
@@ -93,6 +94,8 @@ const ListEmployee = () => {
               <td>{employee.id}</td>
               <td>{employee.firstName}</td>
               <td>{employee.lastName}</td>
+              <td>{employee.email}</td>
+              <td></td>
             </tr>
           ))}
         </tbody>
