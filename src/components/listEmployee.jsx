@@ -59,7 +59,7 @@ const ListEmployee = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">List Employees</h2>
+      <h2 className="text-center mb-4">List of All Employees</h2>
       <table className="table table-bordered table-striped">
         <thead className="table-light">
           <tr>
