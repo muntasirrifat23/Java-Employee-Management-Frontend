@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createEmployee } from "../services/EmployeeService";
+import { createEmployee, getEmployee } from "../services/EmployeeService";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -13,6 +13,20 @@ const AddEmployee = () => {
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (id) {
+      getEmployee(id)
+        .then((response) => {
+          setFirstName(response.data.firstName);
+          setLastName(response.data.lastName);
+          setEmail(response.data.email);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [id]);
 
   // ✅ Fetch employee if updating
   useEffect(() => {
