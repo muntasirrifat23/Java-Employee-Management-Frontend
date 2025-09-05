@@ -2,9 +2,9 @@ import "./App.css";
 import AddEmployee from "./components/AddEmployee";
 import Footer from "./components/Footer";
 import Header from "./components/header";
-import ListEmployee from "./components/ListEmployee";
 import { Outlet, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
+import ListEmployee from "./components/listEmployee";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
           <Route path="/" element={<ListEmployee></ListEmployee>}></Route>
           <Route path="/employee" element={<ListEmployee></ListEmployee>}></Route>
           <Route path="/add-employee" element={<AddEmployee></AddEmployee>}></Route>
-          <Route path="/" element={<ListEmployee></ListEmployee>}></Route>
+          <Route path="/update-employee/:id" element={<AddEmployee></AddEmployee>}></Route>
         </Routes>
         <Outlet></Outlet>
         <Footer></Footer>

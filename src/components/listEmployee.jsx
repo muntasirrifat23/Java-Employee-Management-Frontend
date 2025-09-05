@@ -59,10 +59,14 @@ const ListEmployee = () => {
       .catch((error) => {
         console.log(error);
       });
-  });
+  }, []);
 
   function addNewEmployee() {
     navigator("/add-employee");
+  }
+
+  function updateEmployee(id) {
+    navigator(`/update-employee/${id}`);
   }
 
   return (
@@ -81,9 +85,9 @@ const ListEmployee = () => {
       <table className="table table-bordered table-striped">
         <thead className="table-light">
           <tr>
+            <th>Id</th>
             <th>First Name</th>
             <th>Last Name</th>
-            <th>Id</th>
             <th>Email</th>
             <th>Update / Delete</th>
           </tr>
@@ -95,7 +99,18 @@ const ListEmployee = () => {
               <td>{employee.firstName}</td>
               <td>{employee.lastName}</td>
               <td>{employee.email}</td>
-              <td></td>
+              <td>
+                <button
+                  type="button"
+                  class="m-2 btn btn-warning"
+                  onClick={() => updateEmployee(employee.id)}
+                >
+                  Update
+                </button>
+                <button type="button" class="m-2 btn btn-danger">
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

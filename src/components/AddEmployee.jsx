@@ -1,16 +1,32 @@
-import React, { useState } from "react";
-import { createEmployee, listEmployee } from "../services/EmployeeService";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { createEmployee } from "../services/EmployeeService";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const AddEmployee = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
+  const { id } = useParams();
   const [fieldErrors, setFieldErrors] = useState({});
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   const navigate = useNavigate();
+
+  // ✅ Fetch employee if updating
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`http://localhost:8080/api/employee/${id}`)
+        .then((res) => {
+          setFirstName(res.data.firstName);
+          setLastName(res.data.lastName);
+          setEmail(res.data.email);
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [id]);
 
   const saveEmployee = async (e) => {
     e.preventDefault();
@@ -18,8 +34,6 @@ const AddEmployee = () => {
     setToast({ show: false, message: "", type: "" });
 
     let errors = {};
-
-    // Inline validation
     if (!firstName.trim()) errors.firstName = "First name is required";
     if (!lastName.trim()) errors.lastName = "Last name is required";
     if (!email.trim()) errors.email = "Email is required";
@@ -30,42 +44,43 @@ const AddEmployee = () => {
     }
 
     try {
-      // Get all employees to check duplicate email
-      const response = await listEmployee();
-      const employees = response.data;
-
-      const isDuplicate = employees.some(
-        (emp) => emp.email.toLowerCase() === email.toLowerCase()
-      );
-
-      if (isDuplicate) {
-        setToast({ show: true, message: "Email is already registered!", type: "danger" });
-        return;
+      if (id) {
+        // ✅ Update employee
+        await axios.put(`http://localhost:8080/api/employee/${id}`, {
+          firstName,
+          lastName,
+          email,
+        });
+        setToast({ show: true, message: "Employee Updated!", type: "success" });
+      } else {
+        // ✅ Create new employee
+        await createEmployee({ firstName, lastName, email });
+        setToast({ show: true, message: "Employee Added!", type: "success" });
       }
 
-      // Create employee
-      await createEmployee({ firstName, lastName, email });
-
-      // Show success toast
-      setToast({ show: true, message: "Employee Added Successfully!", type: "success" });
-
-      // Clear form
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-
-      // Navigate after 1.5 seconds
       setTimeout(() => navigate("/employee"), 1500);
     } catch (err) {
       console.error(err);
-      setToast({ show: true, message: "Something went wrong!", type: "danger" });
+      setToast({
+        show: true,
+        message: "Something went wrong!",
+        type: "danger",
+      });
     }
   };
+
+  function pageTitle() {
+    return (
+      <h3 className="text-center mb-4">
+        {id ? "Update Employee" : "Add Employee"}
+      </h3>
+    );
+  }
 
   return (
     <div className="container mt-4 mb-4 d-flex justify-content-center">
       <div className="card p-4" style={{ maxWidth: "400px", width: "100%" }}>
-        <h3 className="text-center mb-4">Add Employee</h3>
+        {pageTitle()}
 
         {/* Toast */}
         {toast.show && (
@@ -89,12 +104,13 @@ const AddEmployee = () => {
 
         <div className="card-body">
           <form onSubmit={saveEmployee}>
-            {/* First Name */}
             <div className="form-group mb-3">
               <label className="form-label">First Name :</label>
               <input
                 type="text"
-                className={`form-control ${fieldErrors.firstName ? "is-invalid" : ""}`}
+                className={`form-control ${
+                  fieldErrors.firstName ? "is-invalid" : ""
+                }`}
                 placeholder="Enter first name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -104,12 +120,13 @@ const AddEmployee = () => {
               )}
             </div>
 
-            {/* Last Name */}
             <div className="form-group mb-3">
               <label className="form-label">Last Name :</label>
               <input
                 type="text"
-                className={`form-control ${fieldErrors.lastName ? "is-invalid" : ""}`}
+                className={`form-control ${
+                  fieldErrors.lastName ? "is-invalid" : ""
+                }`}
                 placeholder="Enter last name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -119,21 +136,24 @@ const AddEmployee = () => {
               )}
             </div>
 
-            {/* Email */}
             <div className="form-group mb-3">
               <label className="form-label">Email :</label>
               <input
                 type="email"
-                className={`form-control ${fieldErrors.email ? "is-invalid" : ""}`}
+                className={`form-control ${
+                  fieldErrors.email ? "is-invalid" : ""
+                }`}
                 placeholder="Enter email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              {fieldErrors.email && <div className="invalid-feedback">{fieldErrors.email}</div>}
+              {fieldErrors.email && (
+                <div className="invalid-feedback">{fieldErrors.email}</div>
+              )}
             </div>
 
             <button type="submit" className="btn btn-success w-100">
-              Submit
+              {id ? "Update" : "Submit"}
             </button>
           </form>
         </div>
