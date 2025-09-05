@@ -42,7 +42,7 @@ const AddEmployee = () => {
     }
   }, [id]);
 
-  const saveEmployee = async (e) => {
+  const saveOrUpdateEmployee = async (e) => {
     e.preventDefault();
     setFieldErrors({});
     setToast({ show: false, message: "", type: "" });
@@ -59,7 +59,7 @@ const AddEmployee = () => {
 
     try {
       if (id) {
-        // ✅ Update employee
+        // Update employee
         await axios.put(`http://localhost:8080/api/employee/${id}`, {
           firstName,
           lastName,
@@ -67,7 +67,7 @@ const AddEmployee = () => {
         });
         setToast({ show: true, message: "Employee Updated!", type: "success" });
       } else {
-        // ✅ Create new employee
+        // Create new employee
         await createEmployee({ firstName, lastName, email });
         setToast({ show: true, message: "Employee Added!", type: "success" });
       }
@@ -117,7 +117,7 @@ const AddEmployee = () => {
         )}
 
         <div className="card-body">
-          <form onSubmit={saveEmployee}>
+          <form onSubmit={saveOrUpdateEmployee}>
             <div className="form-group mb-3">
               <label className="form-label">First Name :</label>
               <input
